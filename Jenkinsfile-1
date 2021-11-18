@@ -25,7 +25,7 @@ pipeline{
            steps{
                sshagent(['USR-TOMCAT-PVT-KEY']) {
                   sh """
-                      scp -o StrictHostKeyChecking=no  **/target/*.war  ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}:/opt/tomcat/tomcat-857/webapps/
+                      scp -o StrictHostKeyChecking=no  **/*.war  ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}:/opt/tomcat/tomcat-857/webapps/
                       ssh ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}  /opt/tomcat/tomcat-857/bin/shutdown.sh
                       ssh ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}  /opt/tomcat/tomcat-857/bin/startup.sh
                      """
