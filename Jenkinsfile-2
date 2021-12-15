@@ -1,0 +1,36 @@
+pipeline{
+    agent any
+    tools{ maven 'Maven-384'}//tools
+    
+    stages{
+      /*  stage('SCM - Checkout'){
+			steps{
+				git url: 'https://github.com/ValaxyTech/hello-world.git'
+			}//steps
+		} //stage('SCM - Checkout')  */
+        
+        
+        stage('Package'){
+            steps{
+                   sh 'mvn clean package'
+            } //steps
+        } //stage('Package')
+
+        stage('Copy-War-To-Tomcat'){
+           environment{
+               TOMCAT_HOST_USER = "usr-tomcat"
+               TOMACT_HOST_IP = "172.31.8.203"
+               //tomcat_deployer_creds = credentials("tomcat-deployer")
+           } //env
+           steps{
+               sshagent(['usr-tomcat']) {
+                  sh """
+                      scp -o StrictHostKeyChecking=no  **/*.war  ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}:/opt/tomcat/tomcat-857/webapps/
+                      ssh ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}  /opt/tomcat/tomcat-857/bin/shutdown.sh
+                      ssh ${TOMCAT_HOST_USER}@${TOMACT_HOST_IP}  /opt/tomcat/tomcat-857/bin/startup.sh
+                     """
+               } //ssh-agent
+           } //steps
+        } //stage('Copy-War-To-Tomcat')
+    } //stages
+} //pipeline
